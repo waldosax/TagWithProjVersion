@@ -30,6 +30,7 @@ class Action {
 
         console.log(`✨ creating new tag ${TAG}`)
 
+        // TODO: Might have to check and see if tag already exists.
         this._executeInProcess(`git tag ${TAG}`)
         this._executeInProcess(`git push origin ${TAG}`)
 
