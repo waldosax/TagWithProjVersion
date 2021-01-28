@@ -4,9 +4,9 @@ const os = require("os"),
 
 class Action {
     constructor() {
-        this.projectFile = process.env.INPUT_PROJECT_FILE_PATH
-        this.versionRegex = new RegExp(process.env.VERSION_REGEX, "m")
-        this.tagFormat = process.env.TAG_FORMAT
+        this.projectFile = process.env.PROJECT_FILE_PATH
+        this.versionRegex = new RegExp(process.env.VERSION_REGEX||"^\s*<Version>(.*)<\/Version>\s*$", "m")
+        this.tagFormat = process.env.TAG_FORMAT||"v*"
     }
 
     _printErrorAndExit(msg) {
@@ -32,10 +32,16 @@ class Action {
 
         // TODO: Might have to check and see if tag already exists.
         const tagProc = this._executeInProcess(`git tag ${TAG}`)
-        const tagExp = `fatal\: tag \'${TAG}\' already exists`;
-        if (tagProc.stdout.match(tagExp) || tagProc.stdout.match(tagExp)) {
-            process.stdout.write(`Tag \'${TAG}\' already exists.` + os.EOL)
-        } else {
+        //console.log("tagProc", tagProc);
+
+        let push = false;
+        if (tagProc.status === 0) {
+            push = true;
+        } else if (tagProc.status === 128) {
+            console.log("Tag already exists. Exiting.");
+        }
+
+        if (push) {
             this._executeInProcess(`git push origin ${TAG}`)
             process.stdout.write(`::set-output name=VERSION::${TAG}` + os.EOL)
         }
