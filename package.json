@@ -11,8 +11,8 @@
     "url": "git+https://github.com/waldosax/TagWithProjVersion.git"
   },
   "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "author": "Rob Mayo (@waldosax)",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/waldosax/TagWithProjVersion/issues"
   },
