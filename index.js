@@ -22,7 +22,7 @@ class Action {
     }
 
     _executeInProcess(cmd) {
-        this._executeCommand(cmd, { encoding: "utf-8", stdio: [process.stdin, process.stdout, process.stderr] })
+        return this._executeCommand(cmd, { encoding: "utf-8", stdio: [process.stdin, process.stdout, process.stderr] })
     }
 
     _tagCommit(version) {
@@ -31,10 +31,14 @@ class Action {
         console.log(`✨ creating new tag ${TAG}`)
 
         // TODO: Might have to check and see if tag already exists.
-        this._executeInProcess(`git tag ${TAG}`)
-        this._executeInProcess(`git push origin ${TAG}`)
-
-        process.stdout.write(`::set-output name=VERSION::${TAG}` + os.EOL)
+        const tagProc = this._executeInProcess(`git tag ${TAG}`)
+        const tagExp = `fatal\: tag \'${TAG}\' already exists`;
+        if (tagProc.stdout.match(tagExp) || tagProc.stdout.match(tagExp)) {
+            process.stdout.write(`Tag \'${TAG}\' already exists.` + os.EOL)
+        } else {
+            this._executeInProcess(`git push origin ${TAG}`)
+            process.stdout.write(`::set-output name=VERSION::${TAG}` + os.EOL)
+        }
     }
 
     run() {
