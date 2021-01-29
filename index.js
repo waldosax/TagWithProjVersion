@@ -39,6 +39,8 @@ class Action {
             push = true;
         } else if (tagProc.status === 128) {
             console.log("Tag already exists. Exiting.");
+        } else {
+            _printErrorAndExit("Error creating tag.")
         }
 
         if (push) {
